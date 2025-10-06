@@ -105,7 +105,6 @@
         #cart-modal {
             transform: translateX(100%);
         }
-        /* Removed .text-glow and .input-glow-focus CSS rules */
     </style>
 </head>
 <body class="antialiased min-h-screen">
@@ -628,6 +627,7 @@
         const mobileMenuButton = document.getElementById('mobile-menu-button');
         const mobileMenu = document.getElementById('mobile-menu');
 
+        // FIXED: Added event listener here to ensure mobile menu functionality is active.
         mobileMenuButton.addEventListener('click', () => {
             mobileMenu.classList.toggle('hidden');
         });
