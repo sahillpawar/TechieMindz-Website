@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechieMindz | Educating and Motivating Young Minds</title>
+    <!-- Load Tailwind CSS CDN for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        /* Custom styles to ensure the Inter font is used and smooth scrolling */
+        body {
+            font-family: 'Inter', sans-serif;
+            scroll-behavior: smooth;
+            background-color: #fff; /* Ensure white background */
+            color: #111827; /* Dark text */
+        }
+        .text-primary-yellow {
+            color: #FFC300;
+        }
+        .bg-primary-yellow {
+            background-color: #FFC300;
+            /* Glossy effect: subtle inner inner shadow */
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        /* New style for glossy white background - Simulates sheen */
+        .glossy-white {
+            background-color: #ffffff;
+            /* Radial gradient creates a subtle bright spot at the top center for the glossy effect */
+            background-image: radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0) 60%);
+            /* Soft shadow lifts the section slightly */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08); 
+        }
+
+        /* Custom focus ring for accessibility and theme consistency */
+        .btn-focus:focus {
+            outline: 2px solid #000;
+            outline-offset: 3px;
+        }
+
+        /* --- 1. Scroll Reveal Animation --- */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translate3d(0, 40px, 0);
+            }
+            to {
+                opacity: 1;
+                transform: translate3d(0, 0, 0);
+            }
+        }
+        .animate-fadeInUp {
+            animation: fadeInUp 0.7s ease-out forwards;
+            opacity: 0; /* Start invisible until animation begins */
+        }
+        .reveal-section {
+            opacity: 0;
+        }
+        
+        /* --- 2. Robotics Pulse Animation for CTA Button --- */
+        @keyframes pulse-shadow {
+            0%, 100% {
+                box-shadow: 0 0 5px rgba(255, 195, 0, 0.4);
+            }
+            50% {
+                box-shadow: 0 0 15px rgba(255, 195, 0, 0.8);
+            }
+        }
+        .animate-pulse-shadow {
+            animation: pulse-shadow 2.5s infinite ease-in-out;
+        }
+        
+        /* --- 3. Interactive Card Activation (Robotics Look) --- */
+        .feature-card:hover {
+            /* Simulates a system powering up/activating */
+            border-color: #FFC300 !important; /* Yellow border activation */
+            box-shadow: 0 8px 15px rgba(255, 195, 0, 0.3), 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle yellow glow */
+            transform: translateY(-2px) scale(1.01);
+        }
+        
+        /* Style for disabled submit button */
+        .submit-disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            filter: grayscale(50%); /* Dim the button when disabled */
+        }
+        
+        /* Cart Count Style */
+        .cart-count-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            font-size: 0.75rem;
+            line-height: 1;
+            padding: 2px 5px;
+            border-radius: 9999px;
+            min-width: 18px;
+            text-align: center;
+        }
+        
+        /* Cart Modal Styles for slide-out effect */
+        #cart-modal-overlay {
+            opacity: 0;
+        }
+        #cart-modal {
+            transform: translateX(100%);
+        }
+        /* Removed .text-glow and .input-glow-focus CSS rules */
+    </style>
+</head>
+<body class="antialiased min-h-screen">
+
+    <!-- Header & Navigation -->
+    <header class="sticky top-0 z-50 bg-white shadow-md border-b border-gray-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center h-16">
+            <a href="#" class="text-2xl font-extrabold tracking-tight text-black flex items-center">
+                <span class="text-primary-yellow">Techie</span>Mindz
+            </a>
+            <div class="flex items-center space-x-4">
+                <nav class="hidden md:flex space-x-8 text-black font-medium">
+                    <a href="#programs" class="hover:text-primary-yellow transition duration-300">Camps & Classes</a>
+                    <a href="#curriculum" class="hover:text-primary-yellow transition duration-300">Curriculum</a>
+                    <a href="#kits" class="hover:text-primary-yellow transition duration-300">Project Kits</a>
+                    <a href="#audience" class="hover:text-primary-yellow transition duration-300">Partnerships</a>
+                </nav>
+
+                <!-- Cart Icon BUTTON - Triggers Modal -->
+                <button id="open-cart-modal" class="p-2 rounded-lg text-black hover:bg-gray-100 focus:outline-none btn-focus relative transition duration-150">
+                    <!-- Cart Icon (Inline SVG) -->
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                    <!-- Cart Item Count Badge -->
+                    <span id="cart-item-count" class="cart-count-badge bg-primary-yellow text-black font-bold border border-black transition duration-300">0</span>
+                </button>
+
+                <!-- Mobile Menu Toggle Button -->
+                <button id="mobile-menu-button" class="md:hidden p-2 rounded-lg text-black hover:bg-gray-100 focus:outline-none btn-focus">
+                    <!-- Hamburger Icon (Inline SVG for simplicity) -->
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Mobile Menu Drawer (Hidden by default) -->
+    <nav id="mobile-menu" class="hidden md:hidden bg-white shadow-xl absolute w-full z-40 pb-4">
+        <a href="#programs" class="block py-2 px-4 text-black hover:bg-gray-100 border-t border-gray-100" onclick="document.getElementById('mobile-menu').classList.add('hidden')">Camps & Classes</a>
+        <a href="#curriculum" class="block py-2 px-4 text-black hover:bg-gray-100 border-t border-gray-100" onclick="document.getElementById('mobile-menu').classList.add('hidden')">Curriculum</a>
+        <a href="#kits" class="block py-2 px-4 text-black hover:bg-gray-100 border-t border-gray-100" onclick="document.getElementById('mobile-menu').classList.add('hidden')">Project Kits</a>
+        <a href="#audience" class="block py-2 px-4 text-black hover:bg-gray-100 border-t border-gray-100" onclick="document.getElementById('mobile-menu').classList.add('hidden')">Partnerships</a>
+        <button onclick="toggleCartModal(true); document.getElementById('mobile-menu').classList.add('hidden')" class="block py-2 px-4 text-left w-full text-black hover:bg-gray-100 border-t border-gray-100">Checkout</button>
+        <a href="#program-inquiry" class="block py-2 px-4 text-black hover:bg-gray-100 border-t border-gray-100" onclick="document.getElementById('mobile-menu').classList.add('hidden')">Inquire</a>
+    </nav>
+
+    <!-- Hero Section (Immediate Staggered Load + Pulse Animation) -->
+    <section class="bg-black py-20 sm:py-28 lg:py-36 text-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h1 class="text-4xl sm:text-6xl lg:text-7xl font-extrabold leading-tight tracking-tighter animate-fadeInUp" style="animation-delay: 0s;">
+                Ignite the Passion for <span class="text-primary-yellow transition duration-500 hover:text-white">Electronics in your child!</span>
+            </h1>
+            <p class="mt-4 text-xl sm:text-2xl font-semibold max-w-3xl mx-auto text-gray-300 animate-fadeInUp" style="animation-delay: 0.2s;">
+                Educating and Motivating Young Minds. Transforming Ideas into Intelligent Machines.
+            </p>
+            <div class="mt-10 flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4 animate-fadeInUp" style="animation-delay: 0.4s;">
+                <a href="#programs" class="inline-flex justify-center items-center px-8 py-3 border border-transparent text-base font-medium rounded-xl shadow-sm text-black bg-primary-yellow hover:bg-yellow-500 focus:outline-none btn-focus transition duration-150 transform hover:scale-105 animate-pulse-shadow">
+                    View Our Programs
+                </a>
+                <a href="#kits" class="inline-flex justify-center items-center px-8 py-3 border border-gray-500 text-base font-medium rounded-xl shadow-sm text-white hover:text-primary-yellow hover:border-primary-yellow focus:outline-none btn-focus transition duration-150 transform hover:scale-105">
+                    Order Project Kits
+                </a>
+            </div>
+        </div>
+    </section>
+    
+    <!-- NEW SECTION: Program Benefits -->
+    <section id="benefits" class="py-16 sm:py-24 bg-gray-100 reveal-section">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-black">
+            <h2 class="text-4xl font-extrabold text-center mb-12 reveal-section">
+                The TechieMindz Program Benefits
+            </h2>
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Benefit 1 -->
+                <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-200 feature-card reveal-section" style="animation-delay: 0.1s;">
+                    <h4 class="text-xl font-bold text-primary-yellow mb-2">Critical Thinking</h4>
+                    <p class="text-gray-700">Encouraging innovative thinking and satisfaction of creativity while executing complex projects.</p>
+                </div>
+                <!-- Benefit 2 -->
+                <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-200 feature-card reveal-section" style="animation-delay: 0.2s;">
+                    <h4 class="text-xl font-bold text-primary-yellow mb-2">Teamwork & Collaboration</h4>
+                    <p class="text-gray-700">Opportunities for collaboration foster communication and essential team-based problem-solving skills.</p>
+                </div>
+                <!-- Benefit 3 -->
+                <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-200 feature-card reveal-section" style="animation-delay: 0.3s;">
+                    <h4 class="text-xl font-bold text-primary-yellow mb-2">Develop Critical Skills</h4>
+                    <p class="text-gray-700">Improve problem-solving, and teamwork, and introduce Arduino programming among students.</p>
+                </div>
+                <!-- Benefit 4 -->
+                <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-200 feature-card reveal-section" style="animation-delay: 0.4s;">
+                    <h4 class="text-xl font-bold text-primary-yellow mb-2">Prepare for Future Careers</h4>
+                    <p class="text-gray-700">Equip students with knowledge and skills relevant to the growing field of robotics and technology.</p>
+                </div>
+                <!-- Benefit 5 -->
+                <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-200 feature-card reveal-section" style="animation-delay: 0.5s;">
+                    <h4 class="text-xl font-bold text-primary-yellow mb-2">Encourage Innovation</h4>
+                    <p class="text-gray-700">Inspire creativity and innovation through interactive and engaging projects and prepare students for future technological careers.</p>
+                </div>
+                <!-- Benefit 6 -->
+                <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-200 feature-card reveal-section" style="animation-delay: 0.6s;">
+                    <h4 class="text-xl font-bold text-primary-yellow mb-2">Hands-on Electronics Focus</h4>
+                    <p class="text-gray-700">Enhance Basic Electronics skills: Provide students with hands-on learning experiences that deepen their understanding of Electronics concepts.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Programs Section (Camps & Classes) -->
+    <section id="programs" class="py-16 sm:py-24 glossy-white reveal-section">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-4xl font-extrabold text-center text-black mb-4 reveal-section">
+                Camps & Academic Programs
+            </h2>
+            <p class="text-xl text-center text-gray-600 mb-12 max-w-3xl mx-auto reveal-section" style="animation-delay: 0.1s;">
+                Interactive classes with expert instructors focused on creative project making.
+            </p>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Card 1: Summer Camp - Individual Card Animation -->
+                <div class="bg-black p-6 rounded-xl shadow-2xl transform transition duration-300 group reveal-section feature-card" style="animation-delay: 0.2s;">
+                    <div class="text-primary-yellow text-4xl mb-4 font-bold">🌞</div>
+                    <h3 class="text-2xl font-bold text-primary-yellow mb-2">Summer Robotics Camp</h3>
+                    <p class="text-gray-300 mb-4">
+                        An intensive program focused on core robotics, coding, and engineering challenges. Perfect for focused learning during summer break.
+                    </p>
+                    <ul class="text-gray-400 space-y-2 text-sm">
+                        <li>✅ Hands-on Kit Building</li>
+                        <li>✅ Beginner to Advanced Tracks</li>
+                        <li>✅ Final Project Showcase</li>
+                    </ul>
+                </div>
+
+                <!-- Card 2: Winter Camp - Individual Card Animation -->
+                <div class="bg-black p-6 rounded-xl shadow-2xl transform transition duration-300 group reveal-section feature-card" style="animation-delay: 0.4s;">
+                    <div class="text-primary-yellow text-4xl mb-4 font-bold">❄️</div>
+                    <h3 class="text-2xl font-bold text-primary-yellow mb-2">Winter Tech Workshop</h3>
+                    <p class="text-gray-300 mb-4">
+                        A focused, short-duration workshop covering specialized technology modules like AI, drones, and advanced logic circuits.
+                    </p>
+                    <ul class="text-gray-400 space-y-2 text-sm">
+                        <li>✅ Specialized Tech Focus</li>
+                        <li>✅ Quick Skill Acquisition</li>
+                        <li>✅ Interactive Challenges</li>
+                    </ul>
+                </div>
+
+                <!-- Card 3: Academic Year Classes - Individual Card Animation -->
+                <div class="bg-black p-6 rounded-xl shadow-2xl transform transition duration-300 group reveal-section feature-card" style="animation-delay: 0.6s;">
+                    <div class="text-primary-yellow text-4xl mb-4 font-bold">🎓</div>
+                    <h3 class="text-2xl font-bold text-primary-yellow mb-2">Academic Year Robotics & Electronics</h3>
+                    <p class="text-gray-300 mb-4">
+                        Weekly, structured classes for continuous learning and deep mastery of robotics and fundamental electronics concepts.
+                    </p>
+                    <ul class="text-gray-400 space-y-2 text-sm">
+                        <li>✅ Continuous Curriculum & Mentorship</li>
+                        <li>✅ Aligns with School Schedule</li>
+                        <li>✅ Includes Electronics Project Kits</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- NEW SECTION: Tech Mastery Track (Curriculum) -->
+    <section id="curriculum" class="py-16 sm:py-24 bg-primary-yellow reveal-section">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-black">
+            <h2 class="text-4xl font-extrabold text-center mb-12 reveal-section">
+                Tech Mastery Track: Level-by-Level Learning
+            </h2>
+            <div class="grid md:grid-cols-2 gap-8 lg:gap-12">
+                <!-- Curriculum Block 1 -->
+                <div class="space-y-6 reveal-section" style="animation-delay: 0.1s;">
+                    <h3 class="text-2xl font-bold border-b-2 border-black pb-2">Foundation Levels (1-3)</h3>
+                    <!-- Level 1 -->
+                    <div class="bg-white p-4 rounded-xl shadow-md border border-gray-300">
+                        <span class="font-extrabold text-black">Level 1:</span> Covers the study of breadboards, LEDs, motors, resistors, obstacle detection, and sensor-based dispensers.
+                    </div>
+                    <!-- Level 2 -->
+                    <div class="bg-white p-4 rounded-xl shadow-md border border-gray-300">
+                        <span class="font-extrabold text-black">Level 2:</span> Includes the study of logic gates, blinking/flashing LED circuits using the IC 555, and building a basic door alarm.
+                    </div>
+                    <!-- Level 3 -->
+                    <div class="bg-white p-4 rounded-xl shadow-md border border-gray-300">
+                        <span class="font-extrabold text-black">Level 3:</span> Involves a metal detector, clap-controlled home automation system, thermistor-based temperature sensing, and a light-activated switch using an LDR.
+                    </div>
+                </div>
+
+                <!-- Curriculum Block 2 -->
+                <div class="space-y-6 reveal-section" style="animation-delay: 0.3s;">
+                    <h3 class="text-2xl font-bold border-b-2 border-black pb-2">Advanced Levels (4-5)</h3>
+                    <!-- Level 4 -->
+                    <div class="bg-white p-4 rounded-xl shadow-md border border-gray-300">
+                        <span class="font-extrabold text-black">Level 4:</span> Includes building a pick-and-place robot, an LCD game using Arduino, a smart stick for blind people, and a smart car barrier.
+                    </div>
+                    <!-- Level 5 -->
+                    <div class="bg-white p-4 rounded-xl shadow-md border border-gray-300">
+                        <span class="font-extrabold text-black">Level 5:</span> Covers the development of a sun-tracking solar panel, a compact Arduino-based pulse oximeter sensor circuit, an obstacle avoidance robot, and a line follower robot.
+                    </div>
+                    
+                    <a href="#program-inquiry" class="inline-flex justify-center items-center px-8 py-3 border border-transparent text-base font-medium rounded-xl shadow-sm text-primary-yellow bg-black hover:bg-gray-800 focus:outline-none btn-focus transition duration-150 transform hover:scale-105">
+                        Inquire About Curriculum Details
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Target Audience Section: Schools and Parents -->
+    <section id="audience" class="py-16 sm:py-24 glossy-white reveal-section">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-4xl font-extrabold text-center text-black mb-12 reveal-section">
+                Join the TechieMindz Community
+            </h2>
+
+            <div class="grid lg:grid-cols-2 gap-12">
+                <!-- Card 1: School Partnerships -->
+                <div class="p-8 border-4 border-black rounded-xl shadow-2xl hover:shadow-primary-yellow transition duration-300 reveal-section feature-card" style="animation-delay: 0.2s;">
+                    <h3 class="text-3xl font-extrabold text-black mb-4">For Schools & Institutions</h3>
+                    <p class="text-lg text-gray-700 mb-6">
+                        Looking to integrate world-class robotics and coding into your curriculum? Partner with TechieMindz to launch engaging, practical, and highly educational STEM programs tailored to your needs.
+                    </p>
+                    <a href="#program-inquiry" class="inline-flex justify-center items-center px-6 py-3 border border-transparent text-base font-medium rounded-xl text-white bg-black hover:bg-gray-800 focus:outline-none btn-focus transition duration-150">
+                        Discuss a Partnership
+                    </a>
+                </div>
+
+                <!-- Card 2: Parents & Guardians -->
+                <div class="p-8 bg-black rounded-xl shadow-2xl hover:shadow-primary-yellow transition duration-300 reveal-section feature-card" style="animation-delay: 0.4s;">
+                    <h3 class="text-3xl font-extrabold text-primary-yellow mb-4">For Parents Who Care</h3>
+                    <p class="text-lg text-gray-300 mb-6">
+                        Invest in your child's future by enrolling them in a program that builds critical thinking, logic, and valuable technology skills in a fun, supportive environment.
+                    </p>
+                    <a href="#program-inquiry" class="inline-flex justify-center items-center px-6 py-3 border border-transparent text-base font-medium rounded-xl text-black bg-primary-yellow hover:bg-yellow-500 focus:outline-none btn-focus transition duration-150">
+                        Find a Class for My Child
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 1: Kit Selection (Products - Vertical Carts) -->
+    <section id="kits" class="py-16 sm:py-24 bg-black reveal-section">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-white">
+            <h2 class="text-4xl font-extrabold text-center text-primary-yellow mb-4 reveal-section">
+                Step 1: Select Your Project Kits
+            </h2>
+            <p class="text-lg text-center text-gray-300 mb-10 reveal-section" style="animation-delay: 0.1s;">
+                Select the quantity of the project kits you wish to order or inquire about.
+            </p>
+
+            <!-- IMPORTANT: Hidden field to store kit data for synchronization -->
+            <input type="hidden" id="kits-summary-input" value="[]">
+            <span id="cart-total" style="display: none;">$0.00</span>
+
+
+            <!-- Kit Selection List (Vertical Carts) -->
+            <div id="kit-selection" class="space-y-6 reveal-section" style="animation-delay: 0.2s;">
+                <!-- Kit 1: Beginner Robotics -->
+                <div id="kit-basic_robotics" class="bg-gray-900 p-6 rounded-xl shadow-lg border-l-4 border-primary-yellow transition duration-300 feature-card flex justify-between items-center flex-wrap">
+                    <div>
+                        <h4 class="text-2xl font-bold text-primary-yellow">Beginner Robotics Kit</h4>
+                        <p class="text-sm text-gray-400 mt-1">Intro to coding and mechanical assembly.</p>
+                        <p class="text-xl font-extrabold mt-2">$99.99</p>
+                    </div>
+                    <div class="flex items-center space-x-4 mt-4 sm:mt-0">
+                        <label class="font-medium text-lg hidden sm:block">Quantity:</label>
+                        <div class="flex items-center space-x-2">
+                            <button type="button" class="quantity-btn minus-btn bg-gray-700 hover:bg-gray-600 text-white p-2 rounded-lg w-8 h-8 flex items-center justify-center transition duration-150 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-primary-yellow focus:ring-offset-2 focus:ring-offset-black" data-kit-id="basic_robotics" aria-label="Decrease quantity">-</button>
+                            <span id="qty-basic_robotics-display" data-price="99.99" class="quantity-display text-xl font-bold w-10 text-center">0</span>
+                            <button type="button" class="quantity-btn plus-btn bg-primary-yellow hover:bg-yellow-500 text-black p-2 rounded-lg w-8 h-8 flex items-center justify-center transition duration-150 border border-black focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 focus:ring-offset-primary-yellow" data-kit-id="basic_robotics" aria-label="Increase quantity">+</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Kit 2: Advanced Electronics -->
+                <div id="kit-advanced_electronics" class="bg-gray-900 p-6 rounded-xl shadow-lg border-l-4 border-primary-yellow transition duration-300 feature-card flex justify-between items-center flex-wrap">
+                    <div>
+                        <h4 class="text-2xl font-bold text-primary-yellow">Advanced Electronics Kit</h4>
+                        <p class="text-sm text-gray-400 mt-1">Deep dive into microcontrollers and sensors.</p>
+                        <p class="text-xl font-extrabold mt-2">$149.99</p>
+                    </div>
+                    <div class="flex items-center space-x-4 mt-4 sm:mt-0">
+                        <label class="font-medium text-lg hidden sm:block">Quantity:</label>
+                        <div class="flex items-center space-x-2">
+                            <button type="button" class="quantity-btn minus-btn bg-gray-700 hover:bg-gray-600 text-white p-2 rounded-lg w-8 h-8 flex items-center justify-center transition duration-150 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-primary-yellow focus:ring-offset-2 focus:ring-offset-black" data-kit-id="advanced_electronics" aria-label="Decrease quantity">-</button>
+                            <span id="qty-advanced_electronics-display" data-price="149.99" class="quantity-display text-xl font-bold w-10 text-center">0</span>
+                            <button type="button" class="quantity-btn plus-btn bg-primary-yellow hover:bg-yellow-500 text-black p-2 rounded-lg w-8 h-8 flex items-center justify-center transition duration-150 border border-black focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 focus:ring-offset-primary-yellow" data-kit-id="advanced_electronics" aria-label="Increase quantity">+</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Kit 3: Summer Camp Project Bundle -->
+                <div id="kit-summer_challenge" class="bg-gray-900 p-6 rounded-xl shadow-lg border-l-4 border-primary-yellow transition duration-300 feature-card flex justify-between items-center flex-wrap">
+                    <div>
+                        <h4 class="text-2xl font-bold text-primary-yellow">Summer Camp Project Bundle</h4>
+                        <p class="text-sm text-gray-400 mt-1">Everything needed for our intensive summer program.</p>
+                        <p class="text-xl font-extrabold mt-2">$199.99</p>
+                    </div>
+                    <div class="flex items-center space-x-4 mt-4 sm:mt-0">
+                        <label class="font-medium text-lg hidden sm:block">Quantity:</label>
+                        <div class="flex items-center space-x-2">
+                            <button type="button" class="quantity-btn minus-btn bg-gray-700 hover:bg-gray-600 text-white p-2 rounded-lg w-8 h-8 flex items-center justify-center transition duration-150 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-primary-yellow focus:ring-offset-2 focus:ring-offset-black" data-kit-id="basic_robotics" aria-label="Decrease quantity">-</button>
+                            <span id="qty-basic_robotics-display" data-price="199.99" class="quantity-display text-xl font-bold w-10 text-center">0</span>
+                            <button type="button" class="quantity-btn plus-btn bg-primary-yellow hover:bg-yellow-500 text-black p-2 rounded-lg w-8 h-8 flex items-center justify-center transition duration-150 border border-black focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 focus:ring-offset-primary-yellow" data-kit-id="basic_robotics" aria-label="Increase quantity">+</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-center mt-12">
+                <a href="#kit-checkout" class="inline-flex justify-center items-center px-10 py-3 border border-transparent text-lg font-medium rounded-xl shadow-sm text-black bg-primary-yellow hover:bg-yellow-500 focus:outline-none btn-focus transition duration-150 transform hover:scale-105">
+                    Proceed to Cart & Checkout &rarr;
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- NEW SECTION 2: Dedicated Kit Checkout Form -->
+    <section id="kit-checkout" class="py-16 sm:py-24 glossy-white reveal-section">
+        <div class="max-w-xl mx-auto px-4 sm:px-6 lg:px-8 text-black">
+            <h2 class="text-4xl font-extrabold text-center text-black mb-10 reveal-section">
+                Step 2: Submit Order Details
+            </h2>
+
+            <form id="kit-checkout-form" class="reveal-section" style="animation-delay: 0.2s;">
+                <input type="hidden" id="kits-summary-input-checkout" name="kits_summary">
+
+                <div class="space-y-6">
+                    <div class="space-y-6">
+                        <div class="bg-gray-100 p-6 rounded-xl shadow-2xl border border-black">
+                            <h3 class="text-2xl font-bold text-black mb-4 border-b pb-2 border-gray-300">
+                                Shipping & Contact Details
+                            </h3>
+                            <!-- Hidden elements used for calculation, kept for script functionality -->
+                            <div id="cart-items-list-checkout" style="display: none;"></div>
+                            <span id="cart-total-checkout" style="display: none;">$0.00</span>
+                            
+                            <div>
+                                <label for="checkout-name" class="block text-sm font-medium text-black mb-1">Full Name</label>
+                                <input type="text" id="checkout-name" name="name" required class="w-full px-4 py-3 rounded-xl border-2 border-gray-400 focus:ring-primary-yellow focus:border-primary-yellow bg-white text-black placeholder-gray-500 transition duration-300" placeholder="Your Full Name">
+                            </div>
+                            <div>
+                                <label for="checkout-email" class="block text-sm font-medium text-black mb-1">Email Address</label>
+                                <input type="email" id="checkout-email" name="email" required class="w-full px-4 py-3 rounded-xl border-2 border-gray-400 focus:ring-primary-yellow focus:border-primary-yellow bg-white text-black placeholder-gray-500 transition duration-300" placeholder="you@example.com">
+                            </div>
+                            <div>
+                                <label for="checkout-phone" class="block text-sm font-medium text-black mb-1">Phone Number</label>
+                                <input type="tel" id="checkout-phone" name="phone" required class="w-full px-4 py-3 rounded-xl border-2 border-gray-400 focus:ring-primary-yellow focus:border-primary-yellow bg-white text-black placeholder-gray-500 transition duration-300" placeholder="+91 XXXX XXXXX">
+                            </div>
+                            <div>
+                                <label for="checkout-address" class="block text-sm font-medium text-black mb-1">Shipping Address</label>
+                                <textarea id="checkout-address" name="address" rows="2" required class="w-full px-4 py-3 rounded-xl border-2 border-gray-400 focus:ring-primary-yellow focus:border-primary-yellow bg-white text-black placeholder-gray-500 transition duration-300" placeholder="Street, City, Pin Code"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Final Submit Button -->
+                <div class="max-w-xl mx-auto mt-8">
+                    <p class="text-center text-sm text-gray-600 mb-4">
+                        <span class="font-bold">Total Items in Cart:</span> <span id="checkout-item-count">0</span>. The final price will be sent to your email after submission.
+                    </p>
+                    <button type="submit" id="place-order-button" disabled class="w-full flex justify-center py-4 px-4 border border-transparent rounded-xl shadow-lg text-xl font-bold text-black bg-primary-yellow hover:bg-yellow-500 focus:outline-none btn-focus transition duration-150 transform hover:scale-[1.01] submit-disabled">
+                        Place Kit Order & Get Payment Link
+                    </button>
+                </div>
+            </form>
+        </div>
+    </section>
+
+    <!-- NEW SECTION 3: Dedicated Program Inquiry Form -->
+    <section id="program-inquiry" class="py-16 sm:py-24 bg-gray-100 reveal-section">
+        <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-black">
+            <h2 class="text-4xl font-extrabold text-center text-black mb-4 reveal-section">
+                Submit Program Inquiry
+            </h2>
+            <p class="text-xl text-center text-gray-600 mb-10 reveal-section" style="animation-delay: 0.1s;">
+                Not ordering kits? Use this form for classes, camps, or partnership details.
+            </p>
+
+            <form id="program-inquiry-form" class="reveal-section" style="animation-delay: 0.2s;">
+                <div class="space-y-6 bg-white p-8 rounded-xl shadow-2xl border border-gray-200">
+                    <div>
+                        <label for="inquiry-name" class="block text-sm font-medium text-black mb-1">Full Name</label>
+                        <input type="text" id="inquiry-name" name="name" required class="w-full px-4 py-3 rounded-xl border-2 border-gray-400 focus:ring-primary-yellow focus:border-primary-yellow bg-white text-black placeholder-gray-500 transition duration-300" placeholder="John Doe or School Contact">
+                    </div>
+                    <div>
+                        <label for="inquiry-email" class="block text-sm font-medium text-black mb-1">Email Address</label>
+                        <input type="email" id="inquiry-email" name="email" required class="w-full px-4 py-3 rounded-xl border-2 border-gray-400 focus:ring-primary-yellow focus:border-primary-yellow bg-white text-black placeholder-gray-500 transition duration-300" placeholder="you@example.com">
+                    </div>
+                    <div>
+                        <label for="inquiry-interest" class="block text-sm font-medium text-black mb-1">I am primarily interested in...</label>
+                        <select id="inquiry-interest" name="interest" required class="w-full px-4 py-3 rounded-xl border-2 border-gray-400 focus:ring-primary-yellow focus:border-primary-yellow bg-white text-black transition duration-300">
+                            <option value="">-- Select an option --</option>
+                            <option value="parent-academic">Academic Year Robotics (Parent)</option>
+                            <option value="parent-summer">Summer/Winter Camp (Parent)</option>
+                            <option value="school-partnership">School Partnership/Curriculum</option>
+                            <option value="general">General Inquiry</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="inquiry-message" class="block text-sm font-medium text-black mb-1">Your Message (Optional)</label>
+                        <textarea id="inquiry-message" name="message" rows="3" class="w-full px-4 py-3 rounded-xl border-2 border-gray-400 focus:ring-primary-yellow focus:border-primary-yellow bg-white text-black placeholder-gray-500 transition duration-300" placeholder="Tell us about your requirements."></textarea>
+                    </div>
+
+                    <button type="submit" id="submit-inquiry-button" disabled class="w-full flex justify-center py-4 px-4 border border-black rounded-xl shadow-lg text-xl font-bold text-black bg-white hover:bg-gray-100 focus:outline-none btn-focus transition duration-150 submit-disabled">
+                        Submit Program Inquiry
+                    </button>
+                </div>
+            </form>
+        </div>
+    </section>
+
+    <!-- NEW: Cart Modal Overlay -->
+    <div id="cart-modal-overlay" class="fixed inset-0 bg-black bg-opacity-70 flex justify-end z-50 hidden transition-opacity duration-300" style="opacity: 0;">
+        <div id="cart-modal" class="bg-white w-full max-w-sm h-full shadow-2xl overflow-y-auto transform transition-transform duration-300 relative" style="transform: translateX(100%);">
+            <div class="p-6">
+                <div class="flex justify-between items-center border-b pb-4 mb-4 border-gray-300">
+                    <h3 class="text-2xl font-bold text-black">Your Shopping Cart</h3>
+                    <button id="close-cart-modal" class="text-gray-500 hover:text-black transition duration-150 p-1">
+                        <!-- Close Icon (Inline SVG) -->
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </button>
+                </div>
+
+                <!-- Dynamic Cart Items List -->
+                <div id="modal-cart-items-list" class="space-y-4 mb-6 text-gray-700 min-h-[50px]">
+                    <!-- Items populated by JavaScript -->
+                    <p class="text-sm italic text-gray-500">Your cart is empty.</p>
+                </div>
+                
+                <!-- Total -->
+                <div class="pt-4 border-t border-black flex justify-between items-center mb-6">
+                    <p class="text-xl font-semibold">Subtotal:</p>
+                    <span id="modal-cart-total" class="text-black text-3xl font-extrabold">$0.00</span>
+                </div>
+                
+                <!-- Proceed to Checkout Button -->
+                <a href="#kit-checkout" id="modal-checkout-btn" class="w-full inline-flex justify-center py-3 px-4 border border-transparent rounded-xl shadow-lg text-lg font-bold text-black bg-primary-yellow hover:bg-yellow-500 focus:outline-none btn-focus transition duration-150 transform hover:scale-[1.01]">
+                    Proceed to Checkout &rarr;
+                </a>
+                <p class="text-xs text-center text-gray-500 mt-2">Final pricing and payment details are confirmed on the next step.</p>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Message box for form submission feedback -->
+    <div id="status-message-container" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 hidden" onclick="this.classList.add('hidden')">
+        <div id="statusMessage" class="bg-white p-8 rounded-xl shadow-2xl max-w-md w-11/12 transform transition-all duration-300 scale-95" onclick="event.stopPropagation();">
+            <h3 id="message-title" class="text-3xl font-extrabold mb-4 text-primary-yellow">Inquiry Sent!</h3>
+            <p id="message-body" class="text-lg text-black mb-6"></p>
+            <p class="text-sm text-gray-600 mb-4">A confirmation has been simulated to be sent to your provided email address.</p>
+            <button class="w-full py-3 bg-black text-primary-yellow rounded-xl font-bold hover:bg-gray-800 transition duration-150" onclick="document.getElementById('status-message-container').classList.add('hidden')">
+                Close
+            </button>
+        </div>
+    </div>
+
+
+    <!-- Footer -->
+    <footer class="bg-black text-white">
+        <div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-4 gap-8">
+                <!-- Col 1: Logo & Tagline -->
+                <div>
+                    <a href="#" class="text-2xl font-extrabold tracking-tight text-white flex items-center mb-2">
+                        <span class="text-primary-yellow">Techie</span>Mindz
+                    </a>
+                    <p class="text-sm text-gray-400">Educating and Motivating Young Minds.</p>
+                    <p class="text-xs text-gray-500 mt-2">© 2024 TechieMindz. All rights reserved.</p>
+                </div>
+
+                <!-- Col 2: Quick Links -->
+                <div>
+                    <h5 class="text-lg font-semibold text-primary-yellow mb-4">Quick Links</h5>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="#programs" class="hover:text-primary-yellow transition duration-150">Camps & Classes</a></li>
+                        <li><a href="#curriculum" class="hover:text-primary-yellow transition duration-150">Mastery Track</a></li>
+                        <li><a href="#kits" class="hover:text-primary-yellow transition duration-150">Project Kits</a></li>
+                        <li><a href="#audience" class="hover:text-primary-yellow transition duration-150">Partnerships</a></li>
+                    </ul>
+                </div>
+
+                <!-- Col 3: Contact Info -->
+                <div>
+                    <h5 class="text-lg font-semibold text-primary-yellow mb-4">Contact Us</h5>
+                    <p class="text-sm text-gray-400 mb-2">
+                        <span class="font-bold">Email:</span> techiemindz20@gmail.com
+                    </p>
+                    <p class="text-sm text-gray-400 mb-2">
+                        <span class="font-bold">Phone:</span> +91 70306 25979
+                    </p>
+                </div>
+                
+                <!-- Col 4: Location -->
+                <div>
+                    <h5 class="text-lg font-semibold text-primary-yellow mb-4">Our Location</h5>
+                    <p class="text-sm text-gray-400">
+                        T-13/502, Raheja Vistas Premier,<br> NIBM Annex, Pune-411060
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // --- Utility function to copy cart state to checkout form ---
+        function copyCartToCheckout() {
+            // This function is essential for synchronizing cart state with the checkout section
+            const kitsSummaryValue = document.getElementById('kits-summary-input').value;
+            document.getElementById('kits-summary-input-checkout').value = kitsSummaryValue;
+            
+            // Note: We no longer display the list/total, but we still update the hidden elements
+            // and the visible item count on the checkout page.
+            const totalItemCount = parseInt(document.getElementById('cart-item-count').textContent) || 0;
+            document.getElementById('checkout-item-count').textContent = totalItemCount;
+        }
+
+        // --- Mobile Menu Toggle Logic ---
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // --- Intersection Observer (Scroll Reveal) Logic ---
+        const observer = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate-fadeInUp');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, {
+            threshold: 0.1
+        });
+
+        document.querySelectorAll('.reveal-section').forEach(element => {
+            observer.observe(element);
+        });
+
+        // --- Cart Modal Elements ---
+        const cartModalOverlay = document.getElementById('cart-modal-overlay');
+        const cartModal = document.getElementById('cart-modal');
+        const openCartModalBtn = document.getElementById('open-cart-modal');
+        const closeCartModalBtn = document.getElementById('close-cart-modal');
+        const modalCartItemsList = document.getElementById('modal-cart-items-list');
+        const modalCartTotal = document.getElementById('modal-cart-total');
+        const modalCheckoutBtn = document.getElementById('modal-checkout-btn');
+
+
+        // --- Cart Core Logic Elements ---
+        const quantityDisplays = document.querySelectorAll('.quantity-display');
+        const quantityButtons = document.querySelectorAll('.quantity-btn');
+        // VIRTUAL ELEMENTS used to hold the state consistently
+        const cartTotalDisplay = document.createElement('span'); // Holds the total string
+        const cartItemsList = document.createElement('div'); // Holds the generated cart item HTML
+        
+        // --- Form elements (for validation/reset) ---
+        const kitsSummaryInput = document.getElementById('kits-summary-input'); // REAL hidden input for kit data
+        const cartItemCountDisplay = document.getElementById('cart-item-count'); // REAL display for header badge
+
+        const checkoutForm = document.getElementById('kit-checkout-form');
+        const checkoutNameInput = document.getElementById('checkout-name');
+        const checkoutEmailInput = document.getElementById('checkout-email');
+        const placeOrderButton = document.getElementById('place-order-button');
+        const inquiryForm = document.getElementById('program-inquiry-form');
+        const inquiryNameInput = document.getElementById('inquiry-name');
+        const inquiryEmailInput = document.getElementById('inquiry-email');
+        const submitInquiryButton = document.getElementById('submit-inquiry-button');
+        const statusMessageContainer = document.getElementById('status-message-container');
+        const messageTitle = document.getElementById('message-title');
+        const messageBody = document.getElementById('message-body');
+
+        
+        // Function to open/close the modal with transitions
+        function toggleCartModal(open) {
+            // Close mobile menu if open
+            mobileMenu.classList.add('hidden'); 
+            
+            // CRITICAL FIX: Ensure the cart data is calculated and updated right before the modal opens
+            if (open) {
+                updateCartTotal(); 
+
+                cartModalOverlay.classList.remove('hidden');
+                setTimeout(() => {
+                    cartModalOverlay.style.opacity = '1';
+                    cartModal.style.transform = 'translateX(0)';
+                }, 10);
+            } else {
+                cartModalOverlay.style.opacity = '0';
+                cartModal.style.transform = 'translateX(100%)';
+                setTimeout(() => {
+                    cartModalOverlay.classList.add('hidden');
+                }, 300); // Match CSS transition duration
+            }
+        }
+
+
+        // Function to handle quantity changes
+        function handleQuantityChange(event) {
+            const button = event.currentTarget;
+            const kitId = button.dataset.kitId;
+            const display = document.getElementById(`qty-${kitId}-display`);
+            
+            let quantity = parseInt(display.textContent) || 0;
+
+            if (button.classList.contains('plus-btn')) {
+                quantity++;
+            } else if (button.classList.contains('minus-btn') && quantity > 0) {
+                quantity--;
+            }
+            
+            display.textContent = quantity;
+            updateCartTotal();
+        }
+
+        // Function to calculate and update the total and render cart items
+        function updateCartTotal() {
+            let total = 0;
+            let summary = [];
+            let cartHtml = '';
+            let totalItemCount = 0;
+
+            quantityDisplays.forEach(display => {
+                const quantity = parseInt(display.textContent) || 0;
+                const price = parseFloat(display.dataset.price);
+                
+                // Get kit name from its ID for display
+                const kitName = display.id.replace('-display', '').replace('qty-', '').split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+                const formattedPrice = (quantity * price).toFixed(2);
+
+                if (quantity > 0) {
+                    total += quantity * price;
+                    totalItemCount += quantity;
+                    summary.push({ name: kitName, quantity: quantity, price: price });
+                    
+                    // HTML for the cart item list
+                    cartHtml += `
+                        <div class="flex justify-between border-b border-gray-300 pb-1">
+                            <span class="text-sm font-light text-black">
+                                <span class="font-bold text-black">${quantity}x</span> ${kitName}
+                            </span>
+                            <span class="text-base font-medium text-black">$${formattedPrice}</span>
+                        </div>
+                    `;
+                }
+            });
+
+            // --- Update Core Virtual State ---
+            cartTotalDisplay.textContent = `$${total.toFixed(2)}`;
+            kitsSummaryInput.value = JSON.stringify(summary);
+            
+            // --- Populate Modal and Checkout Display (Visual Updates) ---
+            if (cartHtml === '') {
+                const emptyMessage = '<p class="text-sm italic text-gray-500">Your cart is empty.</p>';
+                cartItemsList.innerHTML = emptyMessage;
+                modalCartItemsList.innerHTML = emptyMessage;
+                modalCartTotal.textContent = '$0.00';
+                modalCheckoutBtn.classList.add('submit-disabled');
+                modalCheckoutBtn.style.pointerEvents = 'none'; // Disable link clicks too
+            } else {
+                cartItemsList.innerHTML = cartHtml;
+                modalCartItemsList.innerHTML = cartHtml;
+                modalCartTotal.textContent = `$${total.toFixed(2)}`;
+                modalCheckoutBtn.classList.remove('submit-disabled');
+                modalCheckoutBtn.style.pointerEvents = 'auto'; 
+            }
+            
+            // Update header cart item count
+            cartItemCountDisplay.textContent = totalItemCount;
+
+            // Enable/Disable submit buttons based on required fields
+            checkFormValidity();
+            copyCartToCheckout(); // Copy to checkout section visual
+        }
+        
+        // Function to check validity for BOTH forms
+        function checkFormValidity() {
+            const isCartEmpty = parseInt(cartItemCountDisplay.textContent) === 0;
+
+            // --- Kit Checkout Form Validity ---
+            const isCheckoutContactValid = checkoutNameInput.value.trim() !== '' && checkoutEmailInput.value.trim() !== '' && document.getElementById('checkout-phone').value.trim() !== '' && document.getElementById('checkout-address').value.trim() !== '';
+
+            if (isCheckoutContactValid && !isCartEmpty) {
+                placeOrderButton.disabled = false;
+                placeOrderButton.classList.remove('submit-disabled');
+            } else {
+                placeOrderButton.disabled = true;
+                placeOrderButton.classList.add('submit-disabled');
+            }
+            
+            // --- Program Inquiry Form Validity ---
+            const isInquiryContactValid = inquiryNameInput.value.trim() !== '' && inquiryEmailInput.value.trim() !== '';
+            
+            if (isInquiryContactValid) {
+                submitInquiryButton.disabled = false;
+                submitInquiryButton.classList.remove('submit-disabled');
+            } else {
+                submitInquiryButton.disabled = true;
+                submitInquiryButton.classList.add('submit-disabled');
+            }
+        }
+        
+        // Add listeners to plus/minus buttons
+        quantityButtons.forEach(button => {
+            button.addEventListener('click', handleQuantityChange);
+        });
+
+        // Add listeners to checkout contact fields
+        checkoutForm.querySelectorAll('input, textarea').forEach(input => {
+            input.addEventListener('input', checkFormValidity);
+        });
+
+        // Add listeners to inquiry contact fields
+        inquiryForm.querySelectorAll('input, select').forEach(input => {
+            input.addEventListener('input', checkFormValidity);
+        });
+
+        // --- MODAL LISTENERS ---
+        openCartModalBtn.addEventListener('click', () => {
+            toggleCartModal(true);
+        });
+
+        closeCartModalBtn.addEventListener('click', () => {
+            toggleCartModal(false);
+        });
+
+        // Close modal when clicking outside (on the overlay)
+        cartModalOverlay.addEventListener('click', (e) => {
+            if (e.target.id === 'cart-modal-overlay') {
+                toggleCartModal(false);
+            }
+        });
+        
+        // Close modal and navigate on checkout button click
+        modalCheckoutBtn.addEventListener('click', () => {
+            toggleCartModal(false);
+            // The link already has href="#kit-checkout", so navigation is automatic.
+        });
+
+
+        // Initial call to set up the total and button state
+        updateCartTotal(); 
+
+        // --- Kit Checkout Form Submission Logic ---
+        checkoutForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+            
+            const name = checkoutNameInput.value.trim();
+            const email = checkoutEmailInput.value.trim();
+            const kitsData = JSON.parse(document.getElementById('kits-summary-input-checkout').value);
+            const kitsCount = kitsData.length;
+            const total = cartTotalDisplay.textContent; // Use virtual element for total
+            
+            messageTitle.textContent = 'Kit Order Placed!';
+            messageBody.innerHTML = `Thank you, **${name}**! Your order for **${kitsCount} kit(s)** totaling **${total}** has been received. We will contact you at **${email}** shortly with a payment link and shipping confirmation.`;
+            
+            statusMessageContainer.classList.remove('hidden');
+
+            // --- Reset Form State ---
+            quantityDisplays.forEach(display => {
+                display.textContent = '0';
+            });
+            this.reset();
+            updateCartTotal();
+        });
+        
+        // --- Program Inquiry Form Submission Logic ---
+        inquiryForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+            
+            const name = inquiryNameInput.value.trim();
+            const email = inquiryEmailInput.value.trim();
+            const interest = document.getElementById('inquiry-interest').value;
+
+            messageTitle.textContent = 'Program Inquiry Received!';
+            messageBody.innerHTML = `Thank you, **${name}**! Your inquiry regarding **${interest}** has been successfully submitted. We will contact you at **${email}** to provide detailed program information.`;
+            
+            statusMessageContainer.classList.remove('hidden');
+
+            // --- Reset Form State ---
+            this.reset();
+            checkFormValidity();
+        });
+    </script>
+</body>
+</html>
